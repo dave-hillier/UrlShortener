@@ -2,34 +2,45 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using UrlShortener.Models;
 
 namespace UrlShortener.Controllers
 {
   [Route("/")]
   public class ShortenerController : Controller
   {
+    private readonly UrlStorageDbContext dbContext;
+    public ShortenerController(UrlStorageDbContext dbContext)
+    {
+      this.dbContext = dbContext;
+    }
+
     [HttpGet("{shortUrl}")]
-    public IActionResult Get(string shortUrl)
+    public async Task<IActionResult> Get(string shortUrl)
     {
-      try
+      var id = Shortener.Decode(shortUrl);
+      if (id == -1)
       {
-        var decodedTxt = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(shortUrl));
-        return new RedirectResult(decodedTxt);
+        return NotFound();
       }
-      catch (FormatException)
+      var mapping = await dbContext.Urls.FindAsync(id);
+      if (mapping == null)
       {
-        return new NotFoundResult();
+        return NotFound();
       }
+
+      return new RedirectResult(mapping.Url);
     }
 
-    // TODO: authorize
+    // TODO: authorize for creation
     [HttpPost]
-    public IActionResult Post([FromQuery]string longUrl)
+    public async Task<IActionResult> Post([FromQuery]string longUrl)
     {
-      string v = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(longUrl));
-      string url = Url.Action("Get", new { s = v });
-      return new OkObjectResult(new { Long = longUrl, Short = url });
+      var mapping = new UrlMapping { Url = longUrl };
+      dbContext.Add(mapping);
+      await dbContext.SaveChangesAsync();
+      string shortUrl = Shortener.Encode(mapping.Id);
+      return new OkObjectResult(new { Long = longUrl, Short = Url.Action("Get", new { shortUrl = shortUrl }) });
     }
-
   }
 }

@@ -5,7 +5,7 @@ namespace UrlShortener
 {
   class Shortener
   {
-    private const string Alphabet = "23456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ";
+    private const string Alphabet = "23456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"; // No vowels or easily confused letters. 
     private static readonly int Base = Alphabet.Length;
 
     public static string Encode(int num)
