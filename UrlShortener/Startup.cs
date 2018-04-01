@@ -27,7 +27,8 @@ namespace UrlShortener
       services.AddMvc();
       services.AddDbContextPool<UrlStorageDbContext>(options =>
       {
-        options.UseSqlite(connectionString: "Data Source=urlstore.db"); // TODO: make testable/configurable
+        //options.UseSqlite(connectionString: "Data Source=urlstore.db"); // TODO: make testable/configurable
+        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
       });
     }
 
