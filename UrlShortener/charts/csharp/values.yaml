@@ -1,0 +1,29 @@
+# Default values for c#.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 2
+image:
+  pullPolicy: IfNotPresent
+service:
+  name: dotnetcore
+  type: ClusterIP
+  externalPort: 8080
+  internalPort: 80
+  connectionString: "Server=url-shortener-mssql-linux,1433; Database=UrlStorage; User Id=sa; Password=7HtORvw9IuURV8z4RMMA"
+resources:
+  limits:
+    cpu: 1
+    memory: 256Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+ingress:
+  enabled: false
+mssql-linux:
+  acceptEula:
+    value: "y"
+  edition:
+    value: Developer
+  persistence:
+    enabled: true
+  sapassword: "7HtORvw9IuURV8z4RMMA"
