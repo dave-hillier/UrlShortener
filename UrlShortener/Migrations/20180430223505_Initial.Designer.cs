@@ -11,7 +11,7 @@ using UrlShortener.Models;
 namespace UrlShortener.Migrations
 {
     [DbContext(typeof(UrlStorageDbContext))]
-    [Migration("20180401231812_Initial")]
+    [Migration("20180430223505_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,9 @@ namespace UrlShortener.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Url");
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(2048);
 
                     b.HasKey("Id");
 
