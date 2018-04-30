@@ -36,6 +36,11 @@ namespace UrlShortener.Controllers
     [HttpPost]
     public async Task<IActionResult> Post([FromQuery]string longUrl)
     {
+      if (longUrl.Length > 2048)
+      {
+        return new BadRequestObjectResult("Url too long. Limit 2K");
+      }
+
       var mapping = new UrlMapping { Url = longUrl };
       dbContext.Add(mapping);
       await dbContext.SaveChangesAsync();
